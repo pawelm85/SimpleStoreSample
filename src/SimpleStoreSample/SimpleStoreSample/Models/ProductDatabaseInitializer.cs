@@ -14,6 +14,9 @@ namespace SimpleStoreSample.Models
             GetProducts().ForEach(p => context.Products.Add(p));
         }
 
+
+
+
         private static List<Category> GetCategories()
         {
             var categories = new List<Category>

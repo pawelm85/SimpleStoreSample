@@ -17,7 +17,7 @@ namespace SimpleStoreSample.Models
         public string ProductName { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [StringLength(300)]
         [Display(Name = "Product description")]
         [DataType( DataType.MultilineText)]
         public string Description { get; set; }

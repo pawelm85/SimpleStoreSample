@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Web;
@@ -7,6 +8,7 @@ using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Microsoft.AspNet.Identity;
+using SimpleStoreSample.Models;
 
 namespace SimpleStoreSample
 {
@@ -76,6 +78,17 @@ namespace SimpleStoreSample
         {
             Context.GetOwinContext().Authentication.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
         }
+
+
+        public IQueryable<Category> GetCategories()
+        {
+            return new SimpleStoreContext().Categories.AsQueryable();
+        }
+
+        //public IEnumerable<Category> GetCategories()
+        //{
+        //    return new SimpleStoreContext().Categories.ToList();
+        //}
     }
 
 }

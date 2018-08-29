@@ -1,5 +1,8 @@
-﻿using System;
+﻿using SimpleStoreSample.Models;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Optimization;
@@ -16,6 +19,23 @@ namespace SimpleStoreSample
             // Code that runs on application startup
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            InitializeDatabase();
+        }
+
+
+        void Application_Init(object sender, EventArgs e)
+        {
+            Debug.Print($"{sender.ToString()} ------> {e.ToString()}");
+        }
+
+        /// <summary>
+        /// Initialize database with sample data
+        /// </summary>
+        private void InitializeDatabase()
+        {
+            Database.SetInitializer(new ProductDatabaseInitializer());
+            new SimpleStoreContext().Database.Initialize(true);
         }
     }
 }
