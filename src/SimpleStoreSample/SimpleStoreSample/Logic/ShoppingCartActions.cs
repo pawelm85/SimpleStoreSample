@@ -8,7 +8,7 @@ namespace SimpleStoreSample.Logic
 {
     public class ShoppingCartActions : IDisposable
     {
-        public string ShoppingCartId { get; set; }
+        private string ShoppingCartId { get; set; }
         private SimpleStoreContext _db = new SimpleStoreContext();
         public readonly string CartSessionKey = "CartId";
 
@@ -44,7 +44,7 @@ namespace SimpleStoreSample.Logic
             _db.SaveChanges();
         }
 
-        private string GetCartId()
+        public string GetCartId()
         {
             if(HttpContext.Current.Session[CartSessionKey]==null)
             {
@@ -84,7 +84,114 @@ namespace SimpleStoreSample.Logic
         }
 
 
+        public ShoppingCartActions GetCart(HttpContext context)
+        {
+            using (var cart = new ShoppingCartActions())
+            {
+                cart.ShoppingCartId = cart.GetCartId();
+                return cart;
+            }
+        }
 
+
+        public void UpdateShoppingCartDatabase(string cartId, ShoppingCartUpdates[] cartItemUpdates)
+        {
+            using (var db = new SimpleStoreContext())
+            {
+                try
+                {
+                    int cartItemCount = cartItemUpdates.Count();
+                    List<CartItem> myCart = GetCartItems();
+                    foreach(var cartItem in myCart)
+                    {
+                        // Iterate through all rows within shopping cart list.
+                        for(int i=0; i < cartItemCount; i++)
+                        {
+                            // Check if product in cart is on the cartItemUpdates.
+                            if(cartItem.Product.ProductID == cartItemUpdates[i].ProductId)
+                            {
+                                if (cartItemUpdates[i].PurchaseQuantity < 1 || cartItemUpdates[i].RemoveItem == true)
+                                {
+                                    RemoveItem(cartId, cartItem.ProductId);
+                                }
+                                else
+                                {
+                                    UpdateItem(cartId, cartItem.ProductId, cartItemUpdates[i].PurchaseQuantity);
+                                }
+                            }
+                        }
+                    }
+                }catch(Exception e)
+                {
+                    throw new Exception($"ERROR: Unable to update cart database -{e.Message}", e);
+                }
+            }
+        }
+
+        private void UpdateItem(string updateCartId, int productId, int purchaseQuantity)
+        {
+            using (var db = new SimpleStoreContext())
+            {
+                try
+                {
+                    var myItem = (from c in db.ShoppingCartItems where c.CartId == updateCartId && c.Product.ProductID == productId select c).FirstOrDefault();
+                    if(myItem!=null)
+                    {
+                        myItem.Quantity = purchaseQuantity;
+                        db.SaveChanges();
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new Exception($"ERROR: Unable to update CartItem {e.Message}", e);
+                }
+            }
+        }
+
+        private void RemoveItem(string cartId, int productId)
+        {
+            using (var db = new SimpleStoreContext())
+            {
+                try
+                {
+                    var myItem = (from c in db.ShoppingCartItems where c.CartId == cartId && c.Product.ProductID == productId select c).FirstOrDefault();
+                    if (myItem != null)
+                    {
+                        db.ShoppingCartItems.Remove(myItem);
+                        db.SaveChanges();
+                    }
+                }
+                catch(Exception e)
+                {
+                    throw new Exception($"ERROR: Unable to remove cart item {e.Message}", e);
+                }
+            }
+        }
+
+
+        public void EmptyCart()
+        {
+            ShoppingCartId = GetCartId();
+            using (var db = new SimpleStoreContext())
+            {
+                db.Entry(new CartItem { CartId = ShoppingCartId }).State = System.Data.Entity.EntityState.Deleted;
+                db.SaveChanges();
+            }
+        }
+
+        public int GetCount()
+        {
+            ShoppingCartId = GetCartId();
+            int? count = (from cartItem in _db.ShoppingCartItems where cartItem.CartId == ShoppingCartId select (int?)cartItem.Quantity).Sum();
+            return count ?? 0;
+        }
+
+        public struct ShoppingCartUpdates
+        {
+            public int ProductId { get; set; }
+            public int PurchaseQuantity { get; set; }
+            public bool RemoveItem { get; set; }
+        }
 
         public void Dispose()
         {
