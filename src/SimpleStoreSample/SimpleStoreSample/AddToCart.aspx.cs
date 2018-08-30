@@ -13,7 +13,7 @@ namespace SimpleStoreSample
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            string rawId = Request.QueryString["ProductID"];
+            string rawId = Request.QueryString["productID"];
             int productId;
 
             if(!string.IsNullOrEmpty(rawId) && int.TryParse(rawId, out productId))

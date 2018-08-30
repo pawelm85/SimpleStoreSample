@@ -13,7 +13,22 @@ namespace SimpleStoreSample
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            using (ShoppingCartActions userShoppingCart = new ShoppingCartActions())
+            {
+                decimal cartTotal = 0;
+                cartTotal = userShoppingCart.GetTotal();
+                if(cartTotal > 0)
+                {
+                    // Display total value.
+                    lblTotal.Text = cartTotal.ToString("c");
+                }
+                else
+                {
+                    LabelTotalText.Text = string.Empty;
+                    lblTotal.Text = string.Empty;
+                    ShoppingCartTitle.InnerText = "Shopping cart is empty.";
+                }
+            }
         }
 
         public List<CartItem> GetShoppingCartItems()

@@ -17,7 +17,9 @@ namespace SimpleStoreSample.Logic
             // Retrieve the product from the database.
             ShoppingCartId = GetCartId();
 
-            var cartItem = _db.ShoppingCartItems.SingleOrDefault(c => c.CartId == ShoppingCartId && c.ProductId == id);
+            var cartItem = _db.ShoppingCartItems.SingleOrDefault(
+                c => c.CartId == ShoppingCartId 
+                && c.ProductId == id);
 
             if(cartItem==null)
             {
@@ -39,6 +41,7 @@ namespace SimpleStoreSample.Logic
                 //then add one to the quantity
                 cartItem.Quantity++;
             }
+            _db.SaveChanges();
         }
 
         private string GetCartId()
@@ -65,6 +68,23 @@ namespace SimpleStoreSample.Logic
             ShoppingCartId = GetCartId();
             return _db.ShoppingCartItems.Where(c => c.CartId == ShoppingCartId).ToList();
         }
+
+
+        public decimal GetTotal()
+        {
+            ShoppingCartId = GetCartId();
+            // Multiple product price by quantity of that product to get the current price for each of those 
+            // products in the cart.
+            // Sum all product price totals to get the cart total
+            decimal? total = decimal.Zero;
+            total = (decimal?)(from cartItems in _db.ShoppingCartItems
+                               where cartItems.CartId == ShoppingCartId
+                               select (int?)cartItems.Quantity * cartItems.Product.UnitPrice).Sum();
+            return total ?? decimal.Zero;
+        }
+
+
+
 
         public void Dispose()
         {
