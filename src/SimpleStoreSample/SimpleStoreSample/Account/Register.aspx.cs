@@ -5,6 +5,7 @@ using System.Web.UI;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Owin;
+using SimpleStoreSample.Logic;
 using SimpleStoreSample.Models;
 
 namespace SimpleStoreSample.Account
@@ -25,7 +26,15 @@ namespace SimpleStoreSample.Account
                 //manager.SendEmail(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>.");
 
                 signInManager.SignIn( user, isPersistent: false, rememberBrowser: false);
-                IdentityHelper.RedirectToReturnUrl(Request.QueryString["ReturnUrl"], Response);
+
+                // 
+                using (ShoppingCartActions userShoppingCart = new ShoppingCartActions())
+                {
+                    string cartId = userShoppingCart.GetCartId();
+                    userShoppingCart.MigrateCart(cartId, user.Id);
+                }
+
+               IdentityHelper.RedirectToReturnUrl(Request.QueryString["ReturnUrl"], Response);
             }
             else 
             {

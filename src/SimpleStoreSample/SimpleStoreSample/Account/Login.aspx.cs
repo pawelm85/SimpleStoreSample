@@ -4,6 +4,7 @@ using System.Web.UI;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Owin;
+using SimpleStoreSample.Logic;
 using SimpleStoreSample.Models;
 
 namespace SimpleStoreSample.Account
@@ -38,6 +39,11 @@ namespace SimpleStoreSample.Account
                 switch (result)
                 {
                     case SignInStatus.Success:
+
+                        ShoppingCartActions userShoppingCart = new ShoppingCartActions();
+                        string cartId = userShoppingCart.GetCartId();
+                        userShoppingCart.MigrateCart(cartId, Email.Text);
+
                         IdentityHelper.RedirectToReturnUrl(Request.QueryString["ReturnUrl"], Response);
                         break;
                     case SignInStatus.LockedOut:

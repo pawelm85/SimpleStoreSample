@@ -128,6 +128,8 @@ namespace SimpleStoreSample.Logic
             }
         }
 
+
+
         private void UpdateItem(string updateCartId, int productId, int purchaseQuantity)
         {
             using (var db = new SimpleStoreContext())
@@ -193,6 +195,24 @@ namespace SimpleStoreSample.Logic
             public bool RemoveItem { get; set; }
         }
 
+
+
+        public void MigrateCart(string cartId, string username)
+        {
+            using (var db = new SimpleStoreContext())
+            {
+                var shoppingCart = db.ShoppingCartItems.Where(c => c.CartId == cartId);
+                foreach(CartItem item in shoppingCart)
+                {
+                    item.CartId = username;
+                }
+                HttpContext.Current.Session[CartSessionKey] = username;
+                db.SaveChanges();
+            }
+        }
+
+
+
         public void Dispose()
         {
             if(_db!=null)
@@ -202,4 +222,6 @@ namespace SimpleStoreSample.Logic
             }
         }
     }
+
+  
 }

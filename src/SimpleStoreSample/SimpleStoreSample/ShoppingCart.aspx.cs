@@ -48,10 +48,12 @@ namespace SimpleStoreSample
                 string cartId = userShoppingCart.GetCartId();
                 int cartLinesCount = CartList.Rows.Count;
                 ShoppingCartActions.ShoppingCartUpdates[] cartUpdates = new ShoppingCartActions.ShoppingCartUpdates[cartLinesCount];
+
                 for (int i = 0; i < cartLinesCount; i++)
                 {
                     IOrderedDictionary rowValues = new OrderedDictionary();
                     rowValues = GetValues(CartList.Rows[i]);
+
                     cartUpdates[i].ProductId = Convert.ToInt32(rowValues["ProductID"]);
 
                     CheckBox cbRemove = new CheckBox();
@@ -61,6 +63,18 @@ namespace SimpleStoreSample
                     TextBox quantityTextBox = new TextBox();
                     quantityTextBox = (TextBox)CartList.Rows[i].FindControl("PurchaseQuantity");
                     cartUpdates[i].PurchaseQuantity = Convert.ToInt16(quantityTextBox.Text);
+
+
+
+                    //ShoppingCartActions.ShoppingCartUpdates update = new ShoppingCartActions.ShoppingCartUpdates
+                    //{
+                    //    ProductId = Convert.ToInt32(rowValues["ProductID"]),
+                    //    PurchaseQuantity = Convert.ToInt16(quantityTextBox.Text),
+                    //    RemoveItem = cbRemove.Checked
+                    //};
+                    //cartUpdates[i] = update;
+
+
                 }
 
                 userShoppingCart.UpdateShoppingCartDatabase(cartId, cartUpdates);
