@@ -42,7 +42,8 @@
                 <asp:Button ID="UpdateBtn" runat="server" Text="Update" OnClick="UpdateBtn_Click" />
             </td>
             <td>
-                <%-- Checkout button placeholder --%>
+                <asp:ImageButton runat ="server" ID="CheckoutImageButton" ImageUrl="https://static.antyweb.pl/uploads/2016/02/Paypal-logo-20141-1420x670.png"
+                        Width="145" AlternateText="Check out with PayPal" OnClick="CheckoutBtn_Click" BackColor="Transparent" BorderWidth="0" />
             </td>
         </tr>
     </table>

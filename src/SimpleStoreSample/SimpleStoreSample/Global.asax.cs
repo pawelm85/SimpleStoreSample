@@ -9,6 +9,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
 using System.Web.SessionState;
+using SimpleStoreSample.Logic;
 
 namespace SimpleStoreSample
 {
@@ -21,6 +22,11 @@ namespace SimpleStoreSample
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             InitializeDatabase();
+
+            // Create the administrator role and user
+            RoleActions roleActions = new RoleActions();
+            roleActions.CreateAdmin();
+
         }
 
 

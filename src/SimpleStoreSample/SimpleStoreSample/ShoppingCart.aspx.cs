@@ -29,6 +29,7 @@ namespace SimpleStoreSample
                     lblTotal.Text = string.Empty;
                     ShoppingCartTitle.InnerText = "Shopping cart is empty.";
                     UpdateBtn.Visible = false;
+                    CheckoutImageButton.Visible = false;
                 }
             }
         }
@@ -102,5 +103,16 @@ namespace SimpleStoreSample
         {
             UpdateCartItems();
         }
+
+
+        protected void CheckoutBtn_Click(object sender, EventArgs e)
+        {
+            using (ShoppingCartActions userShoppingCart = new ShoppingCartActions())
+            {
+                Session["payment_amt"] = userShoppingCart.GetTotal();
+            }
+            Response.Redirect("Checkout/CheckoutStart.aspx");
+        }
+
     }
 }
