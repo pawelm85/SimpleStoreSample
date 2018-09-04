@@ -24,11 +24,22 @@ namespace SimpleStoreSample.Logic
             if(!roleMgr.RoleExists("Administrator"))
             {
                 IdRoleResult = roleMgr.Create(new IdentityRole("Administrator"));
-                if(!IdRoleResult.Succeeded)
-                {
-                    // Handle error.
-                }
             }
+
+            var userMgr = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
+            var appUser = new ApplicationUser
+            {
+                UserName = "admin",
+                Email = "admin@simplesamplestore.com"
+            };
+            IdUserResult = userMgr.Create(appUser, "Pa$$word");
+
+            if(IdUserResult.Succeeded)
+            {
+                IdUserResult = userMgr.AddToRole(appUser.Id, "Administrator");
+               
+            }
+           
         }
     }
 }
