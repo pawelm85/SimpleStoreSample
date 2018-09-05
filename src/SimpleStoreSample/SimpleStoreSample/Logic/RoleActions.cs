@@ -29,7 +29,7 @@ namespace SimpleStoreSample.Logic
             var userMgr = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
             var appUser = new ApplicationUser
             {
-                UserName = "admin",
+                UserName = "admin@simplesamplestore.com",
                 Email = "admin@simplesamplestore.com"
             };
             IdUserResult = userMgr.Create(appUser, "Pa$$word");
